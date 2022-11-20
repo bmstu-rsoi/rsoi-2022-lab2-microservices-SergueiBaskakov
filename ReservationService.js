@@ -192,9 +192,9 @@ app.get('/api/v1/avaibility', (req, res) => {
           reservation.end_data as endData
   FROM reservation
   INNER JOIN hotels ON reservation.hotel_id=hotels.id
-  WHERE username = $1 AND hotels.hotel_uid = $2 AND reservation.start_date < $3 AND reservation.end_data > $4
+  WHERE username = $1 AND hotels.hotel_uid = $2 AND reservation.start_date < $3 AND reservation.end_data > $4 AND reservation.status = $5
 `
-  let values = [req.query.username, req.query.hotelUid, req.query.endDate, req.query.startDate]
+  let values = [req.query.username, req.query.hotelUid, req.query.endDate, req.query.startDate, "PAID"]
   client.query(querySQL, values, (err, result)=>{
     res.setHeader('Content-Type', 'application/json')
     if(!err){
@@ -203,6 +203,7 @@ app.get('/api/v1/avaibility', (req, res) => {
     }
     else {
       res.statusCode = 404
+      console.log(err.message)
       res.end(JSON.stringify({ message: err.message}));
     }
   });
